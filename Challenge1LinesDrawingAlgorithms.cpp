@@ -1,5 +1,5 @@
 /*
-g++ main.cpp -o main
+g++ Challenge1LinesDrawingAlgorithms.cpp.cpp -o main
 ./main
  
  o dale click en run 
