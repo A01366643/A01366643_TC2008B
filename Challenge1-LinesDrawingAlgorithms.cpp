@@ -1,6 +1,11 @@
-// Para correrlo, dale clic a run 
+/*
+g++ main.cpp -o main
+./main
+ 
+ o dale click en run 
+*/
 
-/*Ejemplo 
+/* Caso de prueba  
 Punto A
 (3,2)
 Punto B
