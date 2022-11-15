@@ -1,1 +1,111 @@
+// g++ challenge4.cpp -o challenge4 -lglut -lGLU -lGL
+// ./challenge4
 
+#include <GL/glut.h>
+#include <math.h>
+#include <stdlib.h>
+#include <ctime>
+#include <cstdlib>
+#include <iostream>
+
+using namespace std;
+
+const double TWO_PI = 6.2831853;
+double numlines = 5.0;
+double numx = 5;
+
+/* Initial display-window size. */
+GLsizei winWidth = 400, winHeight = 400;
+
+class screenPt{
+private:
+    GLint x, y;
+public:
+    /* Default Constructor: initializes coordinate position to (0, 0).*/
+    screenPt ( ) {
+	x = y = 0;
+    }
+    void setCoords (GLint xCoord, GLint yCoord) {
+	x = xCoord;
+	y = yCoord;
+    }
+    GLint getx ( ) const {
+	return x;
+    }
+    GLint gety ( ) const {
+	return y;
+    }
+};
+
+static void init (void){
+    glClearColor (1.0, 1.0, 1.0, 0.0); //    Display-window color = white.        // Set projection parameters.
+}
+
+void winReshapeFcn (int newWidth, int newHeight){
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity ( );
+    gluOrtho2D (0.0, (GLdouble) newWidth, 0.0, (GLdouble) newHeight);
+    glClear (GL_COLOR_BUFFER_BIT);
+}
+
+void plotPoint (void)
+{
+    glClear (GL_COLOR_BUFFER_BIT);
+
+    screenPt hexVertex, circCtr;
+    GLdouble theta;
+    GLint k;
+
+    glClearColor (1.0, 1.0, 1.0, 0.0); //    Display-window color = white.
+
+    circCtr.setCoords (winWidth / 2, winHeight / 2);
+
+    srand(time(NULL));
+
+    double red = (rand()) / (double(RAND_MAX) + 1.0);
+    double blue = (rand()) / (double(RAND_MAX) + 1.0);
+    double green = (rand()) / (double(RAND_MAX) + 1.0);
+    glColor3f (red, green, blue); 
+    
+    glBegin (GL_POLYGON);
+
+    for (k = 0; k < numx; k++) {
+        theta = TWO_PI * k / numlines;
+        hexVertex.setCoords (circCtr.getx ( ) + 150 * cos (theta),
+                    circCtr.gety ( ) + 150 * sin (theta));
+        glVertex2i (hexVertex.getx ( ), hexVertex.gety ( ));
+    }
+
+    numx++;
+    numlines++;
+
+    if(numx > 12){
+        numx = 5;
+        numlines = 5.0;
+    }
+
+    glEnd ( );
+    glFlush ( );
+
+}
+
+void mousePtPlot (GLint button, GLint action, GLint xMouse, GLint yMouse)
+{
+    if (button == GLUT_LEFT_BUTTON && action == GLUT_DOWN){plotPoint( );}
+    glFlush ( );
+}
+
+int main (int argc, char** argv)
+{
+    glutInit (&argc, argv);
+    glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowPosition (100, 100);
+    glutInitWindowSize (winWidth, winHeight);
+    glutCreateWindow ("CHALLENGE 4");
+    init ( );
+    glutDisplayFunc (plotPoint);
+    glutReshapeFunc (winReshapeFcn);
+    glutMouseFunc (mousePtPlot);
+    glutMainLoop ( );
+    return 0;
+}
