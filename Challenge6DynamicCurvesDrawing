@@ -1,0 +1,149 @@
+// g++ challenge3.cpp -o challenge3 -lglut -lGLU -lGL
+// ./challenge3
+
+
+#include <GL/glut.h>
+#include <math.h>
+#include <stdlib.h>
+#include <ctime>
+#include <cstdlib>
+#include <iostream>
+#include <vector> 
+
+using namespace std;
+
+GLsizei winWidth = 400, winHeight = 400; // Initial display-window size.
+
+void init (void){
+
+    glMatrixMode (GL_PROJECTION);         // Set projection parameters.
+    gluOrtho2D (0.0, 400.0, 0.0, 400.0);  //coordinate limits for the picture we want to display.
+}
+
+struct Point{
+    int x;
+    int y;
+};
+
+void winReshapeFcn (GLint newWidth, GLint newHeight)
+{
+    /* Reset viewport and projection parameters */
+    glViewport (0, 0, newWidth, newHeight);
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity ( );
+    gluOrtho2D (0.0, GLdouble (newWidth), 0.0, GLdouble (newHeight));
+    // Reset display-window size parameters.
+    winWidth = newWidth;
+    winHeight = newHeight;
+}
+
+void displayfn(void){
+    glClear (GL_COLOR_BUFFER_BIT);
+    glClearColor (1.0, 1.0, 1.0, 0.0);
+    glPointSize(4.0);
+}
+
+void draw_pixel(int x, int y)
+{
+    glBegin(GL_POINTS);
+    glVertex2i(x, y);
+    glEnd();
+}
+
+void points (Point p1, Point p2) {
+
+    glClear (GL_COLOR_BUFFER_BIT);
+
+    glClearColor (1.0, 1.0, 1.0, 0.0);
+
+    glClear (GL_COLOR_BUFFER_BIT);
+    srand(time(NULL));
+
+    double red = (rand()) / (double(RAND_MAX) + 1.0);
+    double blue = (rand()) / (double(RAND_MAX) + 1.0);
+    double green = (rand()) / (double(RAND_MAX) + 1.0);
+    glColor3f (red, green, blue); 
+    glBegin (GL_POINTS);
+
+    int dx, dy, i, e;
+    int incx, incy, inc1, inc2;
+    int x,y;
+    dx = p2.x-p1.x;
+    dy = p2.y-p1.y;
+    if (dx < 0) dx = -dx;
+    if (dy < 0) dy = -dy;
+    incx = 1;
+    if (p2.x < p1.x) incx = -1;
+    incy = 1;
+    if (p2.y < p1.y) incy = -1;
+    x = p1.x; y = p1.y;
+    if (dx > dy)
+    {
+    draw_pixel(x, y);
+    e = 2 * dy-dx;
+    inc1 = 2*(dy-dx);
+    inc2 = 2*dy;
+    for (i=0; i<dx; i++)
+    {
+    if (e >= 0)
+    {
+    y += incy;
+    e += inc1;
+    }
+    else
+    e += inc2;
+    x += incx;
+    draw_pixel(x, y);
+    }  
+    }
+    else
+    {
+    draw_pixel(x, y);
+    e = 2*dx-dy;
+    inc1 = 2*(dx-dy);
+    inc2 = 2*dx;
+    for (i=0; i<dy; i++)
+    {
+    if (e >= 0)
+    {
+    x += incx;
+    e += inc1;
+    }
+    else
+    e += inc2;
+    y += incy;
+    draw_pixel(x, y);
+    }
+    }
+
+    glEnd();
+    glFlush();
+
+}
+
+void mousePtPlot (GLint button, GLint action, GLint xMouse, GLint yMouse)
+{   
+    struct Point p1, p2;
+    int first = 0;
+    if(button == GLUT_LEFT_BUTTON && action == GLUT_DOWN){
+        p1 = {10, winHeight - 10};
+        p2 = {xMouse, winHeight - yMouse};
+        points(p1, p2);
+    }    
+    
+    glFlush ( );
+}
+
+int main (int argc, char** argv){
+    glutInit (&argc, argv);    // Initialize GLUT.
+    glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);    // Set display mode.
+    glutInitWindowPosition (50, 100);    // Set top-left display-window position.
+    glutInitWindowSize (400, 400);    // Set display-window width and height.
+    glutCreateWindow ("Just another challenge"); // Create display window.
+    init (); // Execute initialization procedure.
+    glutDisplayFunc (displayfn);
+    glutReshapeFunc (winReshapeFcn);
+    glutMouseFunc (mousePtPlot);
+    glutMainLoop ( );    // Display everything and wait.
+    return 0;
+}
