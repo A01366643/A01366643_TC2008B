@@ -1,0 +1,109 @@
+value = 0;
+
+function setup() {
+  createCanvas(800, 400);
+  frameRate(1)
+}
+
+
+function draw() {
+  background(220);
+  
+  
+  //clic 1
+  if(value == 1){
+    noFill(); 
+    bezier(120, 50,  320, 20,  320, 300,  330, 300);
+    noFill();
+    bezier(330, 300,  330, 94,  380, 58,  600, 40);
+  }
+  
+  //click 2
+  if(value == 2){
+    noFill(); 
+    bezier(120, 50,  320, 20,  320, 300,  330, 300);
+    storyboard(120, 50,  320, 20,  320, 300,  330, 300);
+    noFill();
+    bezier(330, 300,  330, 94,  380, 58,  600, 40);
+    storyboard(330, 300,  330, 94,  380, 58,  600, 40); 
+  }
+  
+  //click3
+  if(value == 3){
+    animation(120, 50,  320, 20,  320, 300,  330, 300);
+    animation(330, 300,  330, 94,  380, 58,  600, 40);
+    value = 5; 
+  }
+}
+
+function storyboard(x1, y1, x2, y2, x3, y3, x4, y4){
+  fill(255);
+  steps = 20; 
+  largo = 20;
+  ancho1 = 20;
+  ancho2 = 40; 
+  for(i = 0; i <= steps; i++){
+    t = i / float(steps);
+    x = bezierPoint(120, 320, 320, 330, t);
+    y = bezierPoint(50, 20, 300, 300, t);
+    push()
+    ellipse(x, y, ancho1, largo);
+    pop()
+    x = bezierPoint(330, 330, 380, 600, t);
+    y = bezierPoint(300, 94, 58, 40, t);
+    push()
+    ellipse(x, y, ancho2, largo);
+    pop()
+    ancho1 = ancho1 + 1;
+    ancho2 = ancho2 - 1;
+  }
+}
+
+async function animation(x1, y1, x2, y2, x3, y3, x4, y4) {
+  fill(255);
+  steps = 20;
+  largo = 20;
+  ancho1 = 20;
+  ancho2 = 40; 
+   
+  for (i = 0; i <= steps; i++) {
+    await sleep(500)
+    t = i / float(steps);
+    clear()
+    background(220)
+    x = bezierPoint(120, 320, 320, 330, t);
+    y = bezierPoint(50, 20, 300, 300, t);
+    push()
+    ellipse(x, y, ancho1, largo);
+    pop()
+    ancho1 = ancho1 + 1;
+  }
+
+  for (i = 0; i <= steps; i++) {
+    await sleep(500)
+    t = i / float(steps);
+    clear()
+    background(220)
+    x = bezierPoint(330, 330, 380, 600, t);
+    y = bezierPoint(300, 94, 58, 40, t);
+    push()
+    ellipse(x, y, ancho2, largo);
+    pop()
+    ancho2 = ancho2 - 1;
+  }
+  
+  
+}
+
+function mouseClicked(){
+  if (value == 5) {
+    value = 0; 
+  }
+  else{
+    value++;
+  }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
